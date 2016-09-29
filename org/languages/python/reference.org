@@ -1,0 +1,31 @@
+* The python language reference
+  原文: https://docs.python.org/3/reference/index.html
+
+[[https://cj4777.github.io/languages/python/2016-09-29/data-model.html][下一页：数据模型]]
+
+本参考手册描述了Python 的语法以及“核心语义"。很简练，但是会试图准确并且完整说明。
+  语义不会包含内置对象类型、函数、以及模块，这些会包含在 [[https://docs.python.org/3/library/index.html#library-index][The Python Standard Library]]。
+
+  想要看更友好的语言介绍，请看[[https://docs.python.org/3/tutorial/index.html#tutorial-index][The Python Tutorial]]
+
+  针对 C、C++ 程序员，这里有两个扩展的手册：[[https://docs.python.org/3/extending/index.html#extending-index][Extending and Embedding the Python Interpreter]]
+  描述了如何编写扩展模块， 另一个是 [[https://docs.python.org/3/c-api/index.html#c-api-index][Python/C API Reference Manual]]
+  描述了针对 C/C++ 语言的接口细节。
+
+** 文档介绍
+   本手册目的是介绍 Python 这门语言。不是作为指导手册来供学习。
+
+   我会尝试尽可能清晰的......
+
+   对于一门语言如果有太多的文档的话是很危险的，这有可能导致文档不会同步更新，会很麻烦......
+
+*** Python 的其他语言实现
+    1. CPython（译者注：请注意，以下文档均为针对本版本测试过，原文并没有此说明，但译者只会在本版本中测试）
+    2. Jython
+    3. Python for .NET
+    4. IronPython
+    5. PyPy
+*** 注解（略过）
+    ......
+
+[[https://cj4777.github.io/languages/python/2016-09-29/data-model.html][下一页：数据模型]]

@@ -72,11 +72,11 @@
 .org-org-clock-overlay { /* org-clock-overlay */ background-color: #ffff00; }
 .org-org-code { /* org-code */ color: #7f7f7f; }
 .org-org-column { /* org-column */ background-color: #e5e5e5; }
-.org-org-column-title { /* org-column-title */ background-color: #e5e5e5; font-weight: bold; text-decoration: underline; }
+/* .org-org-column-title { /\* org-column-title *\/ background-color: #e5e5e5; font-weight: bold; text-decoration: underline; } */
 .org-org-date { /* org-date */ color: #a020f0; text-decoration: underline; }
 .org-org-document-info { /* org-document-info */ color: #191970; }
 .org-org-document-info-keyword { /* org-document-info-keyword */ color: #7f7f7f; }
-.org-org-document-title { /* org-document-title */ color: #191970; font-size: 144%; font-weight: bold; }
+/* .org-org-document-title { /\* org-document-title *\/ color: #191970; font-size: 144%; font-weight: bold; } */
 .org-org-done { /* org-done */ color: #228b22; font-weight: bold; }
 .org-org-drawer { /* org-drawer */ color: #0000ff; }
 .org-org-ellipsis { /* org-ellipsis */ color: #b8860b; text-decoration: underline; }

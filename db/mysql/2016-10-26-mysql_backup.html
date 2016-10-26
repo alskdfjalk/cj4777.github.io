@@ -6,13 +6,13 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Python_data Model</title>
-  <meta name="description" content="data-model &lt;!--*/ .title { text-align: center; } .todo { font-family: monospace; color: red; } .done { color: green; } .tag { background-color: #eee; font-fa...">
+  <title>Mysql_backup</title>
+  <meta name="description" content="&lt;!--*/ .title { text-align: center; margin-bottom: .2em; } .subtitle { text-align: center; font-size: medium; font-weight: bold; margin-top:0; } .todo { font...">
 
   
   
   <link rel="stylesheet" href="http://localhost:4000/css/main.css">
-  <link rel="canonical" href="http://localhost:4000/languages/python/2016/09/29/data-model.html">
+  <link rel="canonical" href="http://localhost:4000/db/mysql/2016-10-26-mysql_backup.html">
   <link rel="alternate" type="application/rss+xml" title="CJ BLOG" href="http://localhost:4000/feed.xml">
   
   
@@ -75,7 +75,7 @@
         <article class="post">
 
   <header class="post-header">
-    <h1 class="post-title">Python_data Model</h1>
+    <h1 class="post-title">Mysql_backup</h1>
   </header>
 
   <div class="post-content">
@@ -84,22 +84,30 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>data-model</title>
-<!-- 2016-09-29 四 17:16 -->
+<!-- 2016-10-26 Wed 23:04 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="viewport" content="width=device-width, initial-scale=1" />
+<title></title>
 <meta  name="generator" content="Org-mode" />
+<meta  name="author" content="CarlJohn" />
 <style type="text/css">
  <!--/*--><![CDATA[/*><!--*/
-  .title  { text-align: center; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
   .todo   { font-family: monospace; color: red; }
-  .done   { color: green; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
   .tag    { background-color: #eee; font-family: monospace;
             padding: 2px; font-size: 80%; font-weight: normal; }
   .timestamp { color: #bebebe; }
   .timestamp-kwd { color: #5f9ea0; }
-  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
-  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
-  .center { margin-left: auto; margin-right: auto; text-align: center; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
   .underline { text-decoration: underline; }
   #postamble p, #preamble p { font-size: 90%; margin: .2em; }
   p.verse { margin-left: 3%; }
@@ -138,15 +146,14 @@
   caption.t-above { caption-side: top; }
   caption.t-bottom { caption-side: bottom; }
   td, th { vertical-align:top;  }
-  th.right  { text-align: center;  }
-  th.left   { text-align: center;   }
-  th.center { text-align: center; }
-  td.right  { text-align: right;  }
-  td.left   { text-align: left;   }
-  td.center { text-align: center; }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
   dt { font-weight: bold; }
-  .footpara:nth-child(2) { display: inline; }
-  .footpara { display: block; }
+  .footpara { display: inline; }
   .footdef  { margin-bottom: 1em; }
   .figure { padding: 1em; }
   .figure p { text-align: center; }
@@ -177,13 +184,11 @@
 <link rel="stylesheet" type="text/css"
     href="/css/hideshow.css"/>
 
-
 <script type="text/javascript"
     src="/js/jquery-1.11.0.min.js"></script>
 
 <script type="text/javascript"
     src="/js/jquery-ui-1.10.2.min.js"></script>
-
 
 <script type="text/javascript"
     src="/js/jquery.localscroll-min.js"></script>
@@ -255,179 +260,130 @@ for the JavaScript code in this tag.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#sec-1">1. 数据模型</a>
+<li><a href="#orgheadline6">1. mysql Innodb引擎的增量备份</a>
 <ul>
-<li><a href="#sec-1-1">1.1. 对象、变量和类型</a></li>
-<li><a href="#sec-1-2">1.2. 标准类型的层次结构</a></li>
+<li><a href="#orgheadline1">1.1. 问题</a></li>
+<li><a href="#orgheadline2">1.2. 其他特点</a></li>
+<li><a href="#orgheadline3">1.3. 备份</a></li>
+<li><a href="#orgheadline4">1.4. 操作过程</a></li>
+<li><a href="#orgheadline5">1.5. END</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
-<div id="outline-container-sec-1" class="outline-2">
-<h2 id="sec-1"><span class="section-number-2">1</span> 数据模型</h2>
+<div id="outline-container-orgheadline6" class="outline-2">
+<h2 id="orgheadline6"><span class="section-number-2">1</span> mysql Innodb引擎的增量备份</h2>
 <div class="outline-text-2" id="text-1">
-</div><div id="outline-container-sec-1-1" class="outline-3">
-<h3 id="sec-1-1"><span class="section-number-3">1.1</span> 对象、变量和类型</h3>
+<p>
+嗨，好久不见，亲爱的 CJ 大哥哥终于又回来了，想我吗？
+今天说说 mysql 的备份。
+</p>
+</div>
+<div id="outline-container-orgheadline1" class="outline-3">
+<h3 id="orgheadline1"><span class="section-number-3">1.1</span> 问题</h3>
 <div class="outline-text-3" id="text-1-1">
 <p>
-对象是 Py 中对数据的抽象，所有数据在 Py 中都是对象，或者和对象有关系。(In a sense, and in conformance to Von Neumann’s model of a “stored program computer,” code is also represented by objects.)
-</p>
-
-<p>
-所有对象都有"identify"(不知道怎么翻译，身份？)，一个类型和一个值。对象创建之后便不能做修改；你可以认为它将对象地址保存在了内存中。
-关键字“is” 操作符对比两个对象“身份”是否一致。
-内置函数“id()”返回一个对象身份的整数值。
-</p>
-
-<p>
-<i><b>CPython implementation detail:</b></i> 对于 CPython，id(x)返回的是保存在内存中的地址。
-</p>
-
-<p>
-一个对象类型决定了这个对象支持哪些操作并且定义了这个对象可能支持的类型。函数type()返回一个对象类型。
-比如它的“身份”，对象类型同样不能修改。
-</p>
-
-<p>
-某些对象的值是可以改变的。那些可以改变值的对象叫做“mutable”；那些不可变的值的对象叫做“immutable”。（&#x2026;&#x2026;,
-所以，“immutablility” 的值并不是绝对不能改变得，还有更多细节需要说明）一个对象的类型决定了它的可变性；对于“实例”来说，
-数字、字符串、元祖是不可变的，列表、字典是可变的。
-</p>
-
-<p>
-对象不能被明确销毁；当它们不可用时会被当做垃圾回收。处理过程允许延迟回收到垃圾集合或者把它们都删除掉——
-it is a matter of implementation quality how garbage collection is implemented，as long as no objects are collected that are still reachable.
-</p>
-
-<p>
-<i><b>CPythong implementation detai：</b></i>  CPython 目前使用引用计数机制延迟检查垃圾回收循环链表，这个链表中
-的值多数都是很快就会被弃用（as soon as the become unreachable)，但是不能保证这个垃圾集合中没有循环引用。
-查看 “<a href="https://docs.python.org/3/library/gc.html#module-gc">gc</a>” 模块来查看更多信息以控制循环引用的垃圾集合。
-其他版本的垃圾回收处理过程和 CPython 可能是不同的(Other implementations act differently and CPython may change。)。
-</p>
-
-<p>
-注意这些使用的过程跟踪或者“调试区”（debugging facilities)中会让这些对象一直保留在正常使用的集合中。
-同样要注意在‘try&#x2026;except'声明中会保持对象存在（alive）。
-</p>
-
-<p>
-有些对象会包含引用外在资源的引用，比如打开文件、或者  windows。它会在释放资源时资源已经是 freed，
-但不能对其作出保证，这类型的对象提供了一个明确的释放外部资源的方式，通常是 “close()” 方法。
-如果想让你的程序保持健壮性，强烈建议明确 close 这类对象。
-“try&#x2026;finally” 声明以及 “with” 声明提供了方便的方式去做这些事。
-</p>
-
-<p>
-某些对象会包含其他引用；这些叫做容器。比如：元祖、列表和字典。这些引用可以是容器值的一部分。
-大多数事例中，当我们在说“容器”的值得时候，我们默认认为这些是“values”，而不是容器对象的“身份”（identities）
-总之，当我们在谈论到可变的容器时，只有默认会当做身份（identities）来解释。
-所以呢，如果一个不可变容器（like a tuple）包含了一个可变对象的引用，如果这个可变对象改变了，那么这个值也会改变。
-</p>
-
-<p>
-类型几乎可以影响所有对象的行为。甚至在某种意义上，对象身份的重要性也受到影响：对于可变对象类型，使用操作符
-计算、得到一个新的值得时候，实际上会返回一个和其中一个对象相同的类型和值（用相同类型去计算，并且返回相同类型
-的值），可与可变对象来说这是不允许的。比如，a = 1; b = 1, a and b 也许会也许不会引用同一个对象的值，
-依赖执行方式
-但是 c = []; d = []，c 和 d 会保证引用两个不同的、唯一的，新创建的空列表。(Note that c = d= [] 会将相同的对象赋值给 c 和 d)
+mysql 有不少存储引擎，percona 有自己的引擎，官方本身还有 myisam、innodb 等，
+以及其他比较出众的分支，也都有根据不同场景而定制的各种存储引擎。那么为什么说备份要
+先提到存储引擎呢？因为由于不同的存储引擎因为实现原理不同，它的读写过程不一样，导致备份
+的方式也要有所差别。这里有一篇文档简要的描述了一下这两种引擎的利弊 <a href="http://www.php100.com/html/webkaifa/database/Mysql/2011/0326/7789.html">MyISAM 和 InnoDB 的区别</a>
 </p>
 </div>
 </div>
-<div id="outline-container-sec-1-2" class="outline-3">
-<h3 id="sec-1-2"><span class="section-number-3">1.2</span> 标准类型的层次结构</h3>
+<div id="outline-container-orgheadline2" class="outline-3">
+<h3 id="orgheadline2"><span class="section-number-3">1.2</span> 其他特点</h3>
 <div class="outline-text-3" id="text-1-2">
+<ol class="org-ol">
+<li><i><b>上面链接中没有提到的是，MyISAM 并不支持事物性操作，由于文中并没有提到，所以这里单独拿出来说明下。</b></i></li>
+<li>还有一点要强调的是，MyISAM 只支持表锁，也就是说如果你要将一个表的数据拿出来单独存放的时候，如果数据</li>
+</ol>
 <p>
-下面是一个 python 内置类型的列表。扩展模块（用 C、JAVA 或者其他语言，depending on the implementation）
-可以定义额外类型。未来版本中的 Py 也许会加入类型的类型层次
-（e.g., rational numbers, efficiently stored arrays of integers, etc.）
-虽然这些通常是在标准库中提供了的。
+够大，在你读出整张表来的时间段内，整个表就会被上锁，如果这个期间有来自客户端的写请求便会阻塞。
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgheadline3" class="outline-3">
+<h3 id="orgheadline3"><span class="section-number-3">1.3</span> 备份</h3>
+<div class="outline-text-3" id="text-1-3">
+<p>
+MyISAM 引擎不支持事物操作，相反 InnoDB 则支持，这就直接导致 InnoDB 是可以用增量的方式来备份库的，
+因为每一个写操作都会被记录日志，而增量备份的原理则是根据事物日志来执行备份的。
 </p>
 
 <p>
-下面的某些类型中的描述部分包含了一个“special sttributes”的段落，这些属性提供了“访问实现”（access to the implementation)
-而通常不是用来使用的。这些定义可能会在未来修改。
+对于 MyISAM 来说，只能进行完整备份。
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgheadline4" class="outline-3">
+<h3 id="orgheadline4"><span class="section-number-3">1.4</span> 操作过程</h3>
+<div class="outline-text-3" id="text-1-4">
+<p>
+我使用了 Percona 公司出的一款备份工具，现在生产环境中已经有很多很多小团队在用了。
 </p>
 
 <p>
-<i><b>None</b></i>
-</p>
-
-<p>
-这个类型只有一个值。只有这个对象有这个值。这个对象通过内置的名字“None” 访问，它通常用来表示
-一个值不存在时的场景，比如，一个函数返回了一个没有明确返回指定的任何东西的值。它的 boolean 值是假（否）。
-</p>
-
-<p>
-<i><b>Notimplemented</b></i>
-</p>
-
-<p>
-这个类型只有一个值。只有这个对象有这个值。这个对象通过内置的名字“NotImplemented”访问。
-数值方法和丰富的比较方法（Numeric methods and rich comparison methods）
-如果没有执行操作数的操作应该返回这个值。
-</p>
-
-<p>
-查看<a href="https://docs.python.org/3/library/numbers.html#implementing-the-arithmetic-operations">Implementing the arithmetic operations</a>获取更多细节。
-</p>
-
-<p>
-(译者注：为方便、直观的解释，这里给出一个示例来说明此返回值的用途，但不做解释了: )
+增量备份是基于全量备份来实现的，也就是说，你必须要先有一份全量备份作为基础备份数据，然后在这份基础
+备份数据之上做的修改做增量备份。
 </p>
 <div class="org-src-container">
 
-<pre class="src src-python">class plus_a:
-
-	def __init__(self, age):
-		self.age = age
-
-	def __eq__(self, other):
-		print('other in a: {}'.format(type(other.age)))
-		return NotImplemented
-
-
-class plus_b:
-
-	def __init__(self, age):
-		self.age = age
-
-	def __eq__(self, other):
-		print('other in b: {}'.format(type(other.age)))
-		return self.age == other.age
-		# return NotImplemented
-
-a = plus_a(3)
-b = plus_b(3)
-
-print(a == b) # This is True
+<pre class="src src-shell"><span style="color: #75715E;"># </span><span style="color: #75715E;">&#20840;&#37327;&#22791;&#20221;&#65292;&#35813;&#21629;&#20196;&#23558;&#22791;&#20221;&#25968;&#25454;&#20445;&#23384;&#22312; /backup/mysql/data &#30446;&#24405;&#65292;</span>
+<span style="color: #75715E;"># </span><span style="color: #75715E;">&#29992;&#26102;&#38388;&#25139;&#26469;&#21629;&#21517;</span>
+innobackupex /backup/mysql/data
+<span style="color: #75715E;"># </span><span style="color: #75715E;">&#22686;&#37327;&#22791;&#20221;&#65292;&#35813;&#21629;&#20196;&#23558;&#22791;&#20221;&#25968;&#25454;&#20445;&#23384;&#22312; /backup/mysql/data &#30446;&#24405;&#65292;</span>
+<span style="color: #75715E;"># </span><span style="color: #75715E;">&#21516;&#26679;&#20197;&#26102;&#38388;&#25139;&#26469;&#21629;&#21517;&#22791;&#20221;&#30340;&#23376;&#30446;&#24405;&#65292;</span>
+<span style="color: #75715E;"># </span><span style="color: #75715E;">&#24517;&#39035;&#21152;&#19978;&#22522;&#30784;&#20840;&#37327;&#22791;&#20221;&#30446;&#24405;</span>
+innobackupex <span style="color: #E6DB74; font-weight: bold;">\</span>
+    --incremental-basedir=/backup/mysql/data/2016-10-29_09-05-25 <span style="color: #E6DB74; font-weight: bold;">\</span>
+    --incremental /backup/mysql/data
 </pre>
 </div>
 
 <p>
-<i><b>Ellipsis</b></i>
+在恢复数据时，首先要将增量备份的备份数据合并到基础备份中，而在合并之前，需要执行额外的操作，
+由于在备份时有可能有将要执行但是还没执行的未提交、未回滚的操作，所以在恢复之前要先将这些，
+未执行的日志操作在备份目录执行一遍，以保证恢复数据的完整性（和数据库的数据一致）。
 </p>
 
-<p>
-这个类型只有一个值。只有这个对象有这个值。这个对象通过 literal(本身？) &#x2026; 或者内置名字“Ellipsis”访问。
-BOOLEAN  为 true。
-</p>
+<div class="org-src-container">
 
-<p>
-<i><b>numbers.Number</b></i> 这句看起来太吃力了，已经不能集中注意力了，下期再会吧。
-</p>
+<pre class="src src-bash"><span style="color: #75715E;"># </span><span style="color: #75715E;">&#37325;&#26032;&#25191;&#34892;&#26085;&#24535;&#20013;&#35760;&#24405;&#30340;&#20107;&#29289;&#25805;&#20316;&#65292;</span>
+<span style="color: #75715E;">#               </span><span style="color: #75715E;">--apply-log &#36873;&#39033;&#30340;&#20316;&#29992;&#26159;&#23545;&#25968;&#25454;&#25191;&#34892;&#26085;&#24535;&#35760;&#24405;&#30340;&#25805;&#20316;&#65292;</span>
+<span style="color: #75715E;">#               </span><span style="color: #75715E;">--redo-only &#36873;&#39033;&#30340;&#20316;&#29992;&#26159;&#21482; &#25191;&#34892;&#26410;&#25552;&#20132;&#30340;&#25968;&#25454;&#65292;</span>
+<span style="color: #75715E;">#                                 </span><span style="color: #75715E;">&#32780;&#19981;&#25191;&#34892;&#22238;&#28378;&#25805;&#20316;</span>
+innobackupex --apply-log --redo-only BASE-DIR
+<span style="color: #75715E;"># </span><span style="color: #75715E;">&#23545;&#22686;&#37327;&#25968;&#25454;&#30446;&#24405;&#25191;&#34892;&#19968;&#36941;&#65292;&#24182;&#19988;&#21512;&#24182;&#21040;&#23436;&#25972;&#22791;&#20221;&#30340;&#25968;&#25454;&#20013;</span>
+innobackupex --apply-log --redo-only BASE-DIR <span style="color: #E6DB74; font-weight: bold;">\</span>
+             --incremental-dir=INCREMENTAL-DIR-1
+<span style="color: #75715E;"># </span><span style="color: #75715E;">&#25191;&#34892;&#20840;&#37096;&#26085;&#24535;&#25805;&#20316;</span>
+innobackupex --apply-log BASE-DIR
+<span style="color: #75715E;"># </span><span style="color: #75715E;">&#20889;&#20250;&#25968;&#25454;&#30446;&#24405;&#65292;&#27880;&#24847;&#65292;&#22312;&#26412;&#27493;&#39588;&#20013;&#65292;&#24517;&#39035;&#23558;&#25968;&#25454;&#24211;&#20572;&#27490;&#65292;</span>
+<span style="color: #75715E;"># </span><span style="color: #75715E;">&#28982;&#21518;&#8220;&#28165;&#31354;&#8221;&#25968;&#25454;&#24211;&#30340;&#25968;&#25454;&#30446;&#24405;&#65292;&#20445;&#35777;</span>
+<span style="color: #75715E;"># </span><span style="color: #75715E;">&#25968;&#25454;&#24211;&#30340;&#25968;&#25454;&#30446;&#24405;&#26159;&#31354;&#30340;&#65292;&#21542;&#21017;&#19981;&#20250;&#25191;&#34892;&#65292;</span>
+<span style="color: #75715E;"># </span><span style="color: #75715E;">&#25110;&#32773;&#23558;&#20320;&#35201;&#24674;&#22797;&#30340;&#34920;&#25163;&#21160;&#22797;&#21046;&#22238;&#25968;&#25454;&#24211;&#30340;&#25968;&#25454;&#30446;&#24405;&#20063;&#21487;&#20197;</span>
+innobackupex --copy-back BASE-DIR
+</pre>
+</div>
+</div>
+</div>
 
+<div id="outline-container-orgheadline5" class="outline-3">
+<h3 id="orgheadline5"><span class="section-number-3">1.5</span> END</h3>
+<div class="outline-text-3" id="text-1-5">
 <p>
-These are created by numeric literals and returned as results by arithmetic operators and arithmetic built-in functions. Numeric objects are immutable; once created their value never changes. Python numbers are of course strongly related to mathematical numbers, but subject to the limitations of numerical representation in computers.
+以前说以后翻译 Python 官网文档，想了想这部分内容就不放在这里了，我记录到博客里就好了，大家晚安。
 </p>
 </div>
 </div>
 </div>
 </div>
 <div id="postamble" class="status">
-<p class="date">Created: 2016-09-29 四 17:16</p>
-<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.5.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
+<p class="author">Author: CarlJohn</p>
+<p class="date">Created: 2016-10-26 Wed 23:04</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

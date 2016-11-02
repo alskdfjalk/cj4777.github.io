@@ -88,7 +88,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2016-11-03 Thu 00:13 -->
+<!-- 2016-11-03 Thu 00:17 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="viewport" content="width=device-width, initial-scale=1" />
 <title></title>
@@ -597,7 +597,25 @@ string, uint, float, double or ganglia Global.</li>
 
 <p>
 在调用 handler 的时候，会按 info 中定义顺序来依次调用，并且按照序号将值传递进来。
+忘记强调下了，handler 要返回一个 g_val_t 结构的数据，要用 g_val_t-&gt;f 这个指针来保存
+你的数据结果。g_val_t 结构定义如下：
 </p>
+
+<div class="org-src-container">
+
+<pre class="src src-c"><span style="color: #F92672;">typedef</span> <span style="color: #F92672;">union</span> {
+     <span style="color: #66D9EF;">int8_t</span>   <span style="color: #FD971F;">int8</span>;
+     <span style="color: #66D9EF;">uint8_t</span>  <span style="color: #FD971F;">uint8</span>;
+     <span style="color: #66D9EF;">int16_t</span>  <span style="color: #FD971F;">int16</span>;
+     <span style="color: #66D9EF;">uint16_t</span> <span style="color: #FD971F;">uint16</span>;
+     <span style="color: #66D9EF;">int32_t</span>  <span style="color: #FD971F;">int32</span>;
+     <span style="color: #66D9EF;">uint32_t</span> <span style="color: #FD971F;">uint32</span>;
+     <span style="color: #66D9EF;">float</span>   <span style="color: #FD971F;">f</span>;
+     <span style="color: #66D9EF;">double</span>  <span style="color: #FD971F;">d</span>;
+     <span style="color: #66D9EF;">char</span> <span style="color: #FD971F;">str</span>[MAX_G_STRING_SIZE];
+} <span style="color: #66D9EF;">g_val_t</span>;
+</pre>
+</div>
 </div></li></ol>
 </div>
 
@@ -682,7 +700,7 @@ clean:
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: CarlJohn</p>
-<p class="date">Created: 2016-11-03 Thu 00:13</p>
+<p class="date">Created: 2016-11-03 Thu 00:17</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

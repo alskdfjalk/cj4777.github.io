@@ -88,7 +88,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2016-11-03 Thu 00:07 -->
+<!-- 2016-11-03 Thu 00:13 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="viewport" content="width=device-width, initial-scale=1" />
 <title></title>
@@ -469,7 +469,7 @@ C，嗯，由于 Ganglia 本身是用 C 来实现的，所以对 C 的支持很�
 </p>
 
 <p>
-首先要定义一个数据结构，类型是 mmodule，结构名叫 mem<sub>module</sub>
+首先要定义一个数据结构，类型是 mmodule，结构名叫 mem_module
 </p>
 <div class="org-src-container">
 
@@ -485,7 +485,7 @@ C，嗯，由于 Ganglia 本身是用 C 来实现的，所以对 C 的支持很�
 </div>
 
 <p>
-然后按照这个数据结构里以 mem<sub>metric</sub> 开头的函数分别实现，这里的 mem<sub>metric</sub> 是可以取名叫其他的，
+然后按照这个数据结构里以 mem_metric 开头的函数分别实现，这里的 mem_metric 是可以取名叫其他的，
 这里并没有限制。
 </p>
 
@@ -494,20 +494,20 @@ C，嗯，由于 Ganglia 本身是用 C 来实现的，所以对 C 的支持很�
 </p>
 
 <ol class="org-ol">
-<li>STD<sub>MMODULE</sub><sub>STUFF</sub>: WIKI 解释说，每个模块都要定义一个这个，如果你需要改的话就不需要
+<li>STD_MMODULE_STUFF: WIKI 解释说，每个模块都要定义一个这个，如果你需要改的话就不需要
 看这个 WIKI 页面了。（我觉得挺逗逼。。。就不能好好说话吗？解释下会死啊？）</li>
-<li>mem<sub>metric</sub><sub>init</sub>: 必须定义的函数 (static int metric<sub>init</sub>(apr<sub>pool</sub><sub>t</sub>) *)，
+<li>mem_metric_init: 必须定义的函数 (static int metric_init(apr_pool_t) *)，
 这个函数是被 GMOND 第一个调用的函数。</li>
-<li>mem<sub>metric</sub><sub>cleanup</sub>: 必须定义的函数 (static void metric<sub>cleanup</sub>(void))，这个函数是在
+<li>mem_metric_cleanup: 必须定义的函数 (static void metric_cleanup(void))，这个函数是在
 从 GMOND 卸载该模块的时候调用的，通常什么都不需要做，如果有什么必须在卸载该模块的时候做
 的事情的话，在这里做就好了。</li>
-<li>mem<sub>metric</sub><sub>info</sub>: 必须定义的结构，该结构会在调用 metric<sub>init</sub> 的时候对这里的数据进行初始化。</li>
-<li>mem<sub>metric</sub><sub>handler</sub>: 必须定义的函数，这个函数会在 metric<sub>init</sub> 中对 metric<sub>info</sub> 中的每一个
+<li>mem_metric_info: 必须定义的结构，该结构会在调用 metric_init 的时候对这里的数据进行初始化。</li>
+<li>mem_metric_handler: 必须定义的函数，这个函数会在 metric_init 中对 metric_info 中的每一个
 数据项执行一次。</li>
 </ol>
 </div></li>
 
-<li><a id="orgheadline8"></a>mem<sub>metric</sub><sub>info</sub><br  /><div class="outline-text-5" id="text-1-6-2-2">
+<li><a id="orgheadline8"></a>mem_metric_info<br  /><div class="outline-text-5" id="text-1-6-2-2">
 <div class="org-src-container">
 
 <pre class="src src-c"><span style="color: #F92672;">static</span> <span style="color: #66D9EF;">Ganglia_25metric</span> <span style="color: #FD971F;">mem_metric_info</span>[] =
@@ -535,18 +535,18 @@ C，嗯，由于 Ganglia 本身是用 C 来实现的，所以对 C 的支持很�
 <li>char *name: 监控项的名字</li>
 <li>int tmax: maximium time in seconds between metric collection calls，不翻译了，
 关心本篇文章的应该都能看的懂</li>
-<li>Ganglia<sub>value</sub><sub>types</sub> type: 定义数据类型，用于 APR（Ganglia 使用了 Apache 的 APR
+<li>Ganglia_value_types type: 定义数据类型，用于 APR（Ganglia 使用了 Apache 的 APR
 实现的加载 .so 模块，前边忘介绍了）为 metric 动态创建存储数据类型。可以是其中之一：
 string, uint, float, double or ganglia Global.</li>
 <li>char *units： RRD 图显示的单位</li>
 <li>char *slope: one of the zero, positive, negative, or both</li>
 <li>char *fmt： 格式化</li>
-<li>int msg<sub>size</sub>: 数据长度</li>
+<li>int msg_size: 数据长度</li>
 <li>char *desc: 监控项说明</li>
 </ol>
 </div></li>
 
-<li><a id="orgheadline9"></a>mem<sub>metric</sub><sub>init</sub><br  /><div class="outline-text-5" id="text-1-6-2-3">
+<li><a id="orgheadline9"></a>mem_metric_init<br  /><div class="outline-text-5" id="text-1-6-2-3">
 <div class="org-src-container">
 
 <pre class="src src-c"><span style="color: #F92672;">static</span> <span style="color: #66D9EF;">int</span> <span style="color: #A6E22E;">mem_metric_init</span> ( <span style="color: #66D9EF;">apr_pool_t</span> *<span style="color: #FD971F;">p</span> )
@@ -570,12 +570,12 @@ string, uint, float, double or ganglia Global.</li>
 </p>
 
 <ol class="org-ol">
-<li>MMETRIC<sub>INIT</sub><sub>METADATA</sub> 执行初始化</li>
-<li>MMETRIC<sub>ADD</sub><sub>METADATA</sub> 将调用我们的 handler 将初始化好的数据结构和结果配个对儿 ^_^</li>
+<li>MMETRIC_INIT_METADATA 执行初始化</li>
+<li>MMETRIC_ADD_METADATA 将调用我们的 handler 将初始化好的数据结构和结果配个对儿 ^_^</li>
 </ol>
 </div></li>
 
-<li><a id="orgheadline10"></a>mem<sub>metric</sub><sub>handler</sub><br  /><div class="outline-text-5" id="text-1-6-2-4">
+<li><a id="orgheadline10"></a>mem_metric_handler<br  /><div class="outline-text-5" id="text-1-6-2-4">
 <div class="org-src-container">
 
 <pre class="src src-c"><span style="color: #F92672;">static</span> <span style="color: #66D9EF;">g_val_t</span> <span style="color: #A6E22E;">mem_metric_handler</span> ( <span style="color: #66D9EF;">int</span> <span style="color: #FD971F;">metric_index</span> )
@@ -597,25 +597,7 @@ string, uint, float, double or ganglia Global.</li>
 
 <p>
 在调用 handler 的时候，会按 info 中定义顺序来依次调用，并且按照序号将值传递进来。
-忘记强调下了，handler 要返回一个 g<sub>val</sub><sub>t</sub> 结构的数据，要用 g<sub>val</sub><sub>t</sub>-&gt;f 这个指针来保存
-你的数据结果。g<sub>val</sub><sub>t</sub> 结构定义如下：
 </p>
-
-<div class="org-src-container">
-
-<pre class="src src-c"><span style="color: #F92672;">typedef</span> <span style="color: #F92672;">union</span> {
-     <span style="color: #66D9EF;">int8_t</span>   <span style="color: #FD971F;">int8</span>;
-     <span style="color: #66D9EF;">uint8_t</span>  <span style="color: #FD971F;">uint8</span>;
-     <span style="color: #66D9EF;">int16_t</span>  <span style="color: #FD971F;">int16</span>;
-     <span style="color: #66D9EF;">uint16_t</span> <span style="color: #FD971F;">uint16</span>;
-     <span style="color: #66D9EF;">int32_t</span>  <span style="color: #FD971F;">int32</span>;
-     <span style="color: #66D9EF;">uint32_t</span> <span style="color: #FD971F;">uint32</span>;
-     <span style="color: #66D9EF;">float</span>   <span style="color: #FD971F;">f</span>; 
-     <span style="color: #66D9EF;">double</span>  <span style="color: #FD971F;">d</span>;
-     <span style="color: #66D9EF;">char</span> <span style="color: #FD971F;">str</span>[MAX_G_STRING_SIZE];
-} <span style="color: #66D9EF;">g_val_t</span>;
-</pre>
-</div>
 </div></li></ol>
 </div>
 
@@ -634,17 +616,13 @@ string, uint, float, double or ganglia Global.</li>
 <span style="color: #FD971F;">GANGLIABIN</span>=/path/to/ganglia-3.7.2/lib64/ganglia
 <span style="color: #FD971F;">APRINCLUDE</span> = /usr/include/apr-1
 <span style="color: #FD971F;">SYSLIBS</span> = /usr/lib64
-<span style="color: #FD971F;">INCLUDE</span> = -I$(GANGLIAROOT)/libmetrics
-<span style="color: #FD971F;">INCLUDE +</span>= -I$(GANGLIAROOT)/include
-<span style="color: #FD971F;">INCLUDE +</span>= -I$(GANGLIAROOT)/lib
-<span style="color: #FD971F;">INCLUDE +</span>= -I$(APRINCLUDE)
+<span style="color: #FD971F;">INCLUDE</span> = -I$(GANGLIAROOT)/libmetrics -I$(GANGLIAROOT)/include -I$(GANGLIAROOT)/lib -I$(APRINCLUDE)
 <span style="color: #FD971F;">LIBS</span> = -L$(SYSLIBS)
 <span style="color: #FD971F;">OPTS</span> = -Wall -std=c99 -lcurl
 <span style="color: #FD971F;">cc</span> = gcc
 
 mod_mem_test.so:
-        $(cc) $(INCLUDE) $(LIBS) $(OPTS) --shared -o mod_mem_test.so\
-              -fPIC mod_mem_test.c
+        $(cc) $(INCLUDE) $(LIBS) $(OPTS) --shared -o mod_nginx_status.so -fPIC mod_mem_test.c
 default:
         mod_mem_test.so
         cp mod_mem_test.so $(GANGLIABIN)
@@ -704,7 +682,7 @@ clean:
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: CarlJohn</p>
-<p class="date">Created: 2016-11-03 Thu 00:07</p>
+<p class="date">Created: 2016-11-03 Thu 00:13</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

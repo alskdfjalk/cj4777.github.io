@@ -1,3 +1,4 @@
+#+OPTIONS: ^:nil
 * Ganglia 的自定义监控项
 **   我和 Ganglia 的初识
    在我了解 Ganglia 这个监控之前，一直在思考一个问题，如果有很多很多节点，每个节点都有很多很多监控指标的
@@ -194,6 +195,22 @@
      #+END_SRC
 
      在调用 handler 的时候，会按 info 中定义顺序来依次调用，并且按照序号将值传递进来。
+     忘记强调下了，handler 要返回一个 g_val_t 结构的数据，要用 g_val_t->f 这个指针来保存
+     你的数据结果。g_val_t 结构定义如下：
+
+     #+BEGIN_SRC c
+       typedef union {
+	    int8_t   int8;
+	    uint8_t  uint8;
+	    int16_t  int16;
+	    uint16_t uint16;
+	    int32_t  int32;
+	    uint32_t uint32;
+	    float   f;
+	    double  d;
+	    char str[MAX_G_STRING_SIZE];
+       } g_val_t;
+     #+END_SRC
 
 *** 使用模块
     以下是从我写的 Makefile 和配置文件修改了下贴上来的，不保证完全可配合上边程序可用，

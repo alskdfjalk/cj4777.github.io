@@ -6,13 +6,13 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>MySQL Backup （innobackupex）</title>
+  <title>Tools Diff</title>
   <meta name="description" content="&lt;!--*/ .title { text-align: center; margin-bottom: .2em; } .subtitle { text-align: center; font-size: medium; font-weight: bold; margin-top:0; } .todo { font...">
 
   
   
   <link rel="stylesheet" href="https://cj4777.github.io/css/main.css">
-  <link rel="canonical" href="https://cj4777.github.io/db/mysql/2016-10-26-mysql_backup.html">
+  <link rel="canonical" href="https://cj4777.github.io/operations/automation/2016-12-06-tools-diff.html">
   <link rel="alternate" type="application/rss+xml" title="CJ BLOG" href="https://cj4777.github.io/feed.xml">
   
   
@@ -85,7 +85,7 @@
         <article class="post">
 
   <header class="post-header">
-    <h1 class="post-title">MySQL Backup （innobackupex）</h1>
+    <h1 class="post-title">Tools Diff</h1>
   </header>
 
   <div class="post-content">
@@ -94,7 +94,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2016-10-26 Wed 23:04 -->
+<!-- 2016-12-06 Tue 22:57 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="viewport" content="width=device-width, initial-scale=1" />
 <title></title>
@@ -270,130 +270,150 @@ for the JavaScript code in this tag.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#orgheadline6">1. mysql Innodb引擎的增量备份</a>
+<li><a href="#orgheadline12">1. 运维工具简介、区别</a>
 <ul>
-<li><a href="#orgheadline1">1.1. 问题</a></li>
-<li><a href="#orgheadline2">1.2. 其他特点</a></li>
-<li><a href="#orgheadline3">1.3. 备份</a></li>
-<li><a href="#orgheadline4">1.4. 操作过程</a></li>
-<li><a href="#orgheadline5">1.5. END</a></li>
+<li><a href="#orgheadline3">1.1. Puppet</a>
+<ul>
+<li><a href="#orgheadline1">1.1.1. Pors</a></li>
+<li><a href="#orgheadline2">1.1.2. Cons</a></li>
+</ul>
+</li>
+<li><a href="#orgheadline5">1.2. Chef</a>
+<ul>
+<li><a href="#orgheadline4">1.2.1. Pors</a></li>
+</ul>
+</li>
+<li><a href="#orgheadline8">1.3. Ansible</a>
+<ul>
+<li><a href="#orgheadline6">1.3.1. Pors</a></li>
+<li><a href="#orgheadline7">1.3.2. Cons</a></li>
+</ul>
+</li>
+<li><a href="#orgheadline11">1.4. Salt</a>
+<ul>
+<li><a href="#orgheadline9">1.4.1. Pors</a></li>
+<li><a href="#orgheadline10">1.4.2. Cons</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
-<div id="outline-container-orgheadline6" class="outline-2">
-<h2 id="orgheadline6"><span class="section-number-2">1</span> mysql Innodb引擎的增量备份</h2>
+<div id="outline-container-orgheadline12" class="outline-2">
+<h2 id="orgheadline12"><span class="section-number-2">1</span> 运维工具简介、区别</h2>
 <div class="outline-text-2" id="text-1">
-<p>
-嗨，好久不见，亲爱的 CJ 大哥哥终于又回来了，想我吗？
-今天说说 mysql 的备份。
-</p>
-</div>
-<div id="outline-container-orgheadline1" class="outline-3">
-<h3 id="orgheadline1"><span class="section-number-3">1.1</span> 问题</h3>
+</div><div id="outline-container-orgheadline3" class="outline-3">
+<h3 id="orgheadline3"><span class="section-number-3">1.1</span> Puppet</h3>
 <div class="outline-text-3" id="text-1-1">
-<p>
-mysql 有不少存储引擎，percona 有自己的引擎，官方本身还有 myisam、innodb 等，
-以及其他比较出众的分支，也都有根据不同场景而定制的各种存储引擎。那么为什么说备份要
-先提到存储引擎呢？因为由于不同的存储引擎因为实现原理不同，它的读写过程不一样，导致备份
-的方式也要有所差别。这里有一篇文档简要的描述了一下这两种引擎的利弊 <a href="http://www.php100.com/html/webkaifa/database/Mysql/2011/0326/7789.html">MyISAM 和 InnoDB 的区别</a>
-</p>
-</div>
-</div>
-<div id="outline-container-orgheadline2" class="outline-3">
-<h3 id="orgheadline2"><span class="section-number-3">1.2</span> 其他特点</h3>
-<div class="outline-text-3" id="text-1-2">
+</div><div id="outline-container-orgheadline1" class="outline-4">
+<h4 id="orgheadline1"><span class="section-number-4">1.1.1</span> Pors</h4>
+<div class="outline-text-4" id="text-1-1-1">
 <ol class="org-ol">
-<li><i><b>上面链接中没有提到的是，MyISAM 并不支持事物性操作，由于文中并没有提到，所以这里单独拿出来说明下。</b></i></li>
-<li>还有一点要强调的是，MyISAM 只支持表锁，也就是说如果你要将一个表的数据拿出来单独存放的时候，如果数据</li>
+<li>Strong compliance automation and reporting tools</li>
+<li>社区活跃</li>
+<li>WEB 平台，近实时的节点管理</li>
+<li>和 SHELL 结合很好</li>
+<li>安装简单并且支持多平台</li>
+<li>针对大企业级用户有实用、稳定并且成熟的解决方案</li>
 </ol>
-<p>
-够大，在你读出整张表来的时间段内，整个表就会被上锁，如果这个期间有来自客户端的写请求便会阻塞。
-</p>
 </div>
 </div>
-
-<div id="outline-container-orgheadline3" class="outline-3">
-<h3 id="orgheadline3"><span class="section-number-3">1.3</span> 备份</h3>
-<div class="outline-text-3" id="text-1-3">
-<p>
-MyISAM 引擎不支持事物操作，相反 InnoDB 则支持，这就直接导致 InnoDB 是可以用增量的方式来备份库的，
-因为每一个写操作都会被记录日志，而增量备份的原理则是根据事物日志来执行备份的。
-</p>
-
-<p>
-对于 MyISAM 来说，只能进行完整备份。
-</p>
-</div>
-</div>
-
-<div id="outline-container-orgheadline4" class="outline-3">
-<h3 id="orgheadline4"><span class="section-number-3">1.4</span> 操作过程</h3>
-<div class="outline-text-3" id="text-1-4">
-<p>
-我使用了 Percona 公司出的一款备份工具，现在生产环境中已经有很多很多小团队在用了。
-</p>
-
-<p>
-增量备份是基于全量备份来实现的，也就是说，你必须要先有一份全量备份作为基础备份数据，然后在这份基础
-备份数据之上做的修改做增量备份。
-</p>
-<div class="org-src-container">
-
-<pre class="src src-shell"><span style="color: #75715E;"># </span><span style="color: #75715E;">&#20840;&#37327;&#22791;&#20221;&#65292;&#35813;&#21629;&#20196;&#23558;&#22791;&#20221;&#25968;&#25454;&#20445;&#23384;&#22312; /backup/mysql/data &#30446;&#24405;&#65292;</span>
-<span style="color: #75715E;"># </span><span style="color: #75715E;">&#29992;&#26102;&#38388;&#25139;&#26469;&#21629;&#21517;</span>
-innobackupex /backup/mysql/data
-<span style="color: #75715E;"># </span><span style="color: #75715E;">&#22686;&#37327;&#22791;&#20221;&#65292;&#35813;&#21629;&#20196;&#23558;&#22791;&#20221;&#25968;&#25454;&#20445;&#23384;&#22312; /backup/mysql/data &#30446;&#24405;&#65292;</span>
-<span style="color: #75715E;"># </span><span style="color: #75715E;">&#21516;&#26679;&#20197;&#26102;&#38388;&#25139;&#26469;&#21629;&#21517;&#22791;&#20221;&#30340;&#23376;&#30446;&#24405;&#65292;</span>
-<span style="color: #75715E;"># </span><span style="color: #75715E;">&#24517;&#39035;&#21152;&#19978;&#22522;&#30784;&#20840;&#37327;&#22791;&#20221;&#30446;&#24405;</span>
-innobackupex <span style="color: #E6DB74; font-weight: bold;">\</span>
-    --incremental-basedir=/backup/mysql/data/2016-10-29_09-05-25 <span style="color: #E6DB74; font-weight: bold;">\</span>
-    --incremental /backup/mysql/data
-</pre>
-</div>
-
-<p>
-在恢复数据时，首先要将增量备份的备份数据合并到基础备份中，而在合并之前，需要执行额外的操作，
-由于在备份时有可能有将要执行但是还没执行的未提交、未回滚的操作，所以在恢复之前要先将这些，
-未执行的日志操作在备份目录执行一遍，以保证恢复数据的完整性（和数据库的数据一致）。
-</p>
-
-<div class="org-src-container">
-
-<pre class="src src-bash"><span style="color: #75715E;"># </span><span style="color: #75715E;">&#37325;&#26032;&#25191;&#34892;&#26085;&#24535;&#20013;&#35760;&#24405;&#30340;&#20107;&#29289;&#25805;&#20316;&#65292;</span>
-<span style="color: #75715E;">#               </span><span style="color: #75715E;">--apply-log &#36873;&#39033;&#30340;&#20316;&#29992;&#26159;&#23545;&#25968;&#25454;&#25191;&#34892;&#26085;&#24535;&#35760;&#24405;&#30340;&#25805;&#20316;&#65292;</span>
-<span style="color: #75715E;">#               </span><span style="color: #75715E;">--redo-only &#36873;&#39033;&#30340;&#20316;&#29992;&#26159;&#21482; &#25191;&#34892;&#26410;&#25552;&#20132;&#30340;&#25968;&#25454;&#65292;</span>
-<span style="color: #75715E;">#                                 </span><span style="color: #75715E;">&#32780;&#19981;&#25191;&#34892;&#22238;&#28378;&#25805;&#20316;</span>
-innobackupex --apply-log --redo-only BASE-DIR
-<span style="color: #75715E;"># </span><span style="color: #75715E;">&#23545;&#22686;&#37327;&#25968;&#25454;&#30446;&#24405;&#25191;&#34892;&#19968;&#36941;&#65292;&#24182;&#19988;&#21512;&#24182;&#21040;&#23436;&#25972;&#22791;&#20221;&#30340;&#25968;&#25454;&#20013;</span>
-innobackupex --apply-log --redo-only BASE-DIR <span style="color: #E6DB74; font-weight: bold;">\</span>
-             --incremental-dir=INCREMENTAL-DIR-1
-<span style="color: #75715E;"># </span><span style="color: #75715E;">&#25191;&#34892;&#20840;&#37096;&#26085;&#24535;&#25805;&#20316;</span>
-innobackupex --apply-log BASE-DIR
-<span style="color: #75715E;"># </span><span style="color: #75715E;">&#20889;&#20250;&#25968;&#25454;&#30446;&#24405;&#65292;&#27880;&#24847;&#65292;&#22312;&#26412;&#27493;&#39588;&#20013;&#65292;&#24517;&#39035;&#23558;&#25968;&#25454;&#24211;&#20572;&#27490;&#65292;</span>
-<span style="color: #75715E;"># </span><span style="color: #75715E;">&#28982;&#21518;&#8220;&#28165;&#31354;&#8221;&#25968;&#25454;&#24211;&#30340;&#25968;&#25454;&#30446;&#24405;&#65292;&#20445;&#35777;</span>
-<span style="color: #75715E;"># </span><span style="color: #75715E;">&#25968;&#25454;&#24211;&#30340;&#25968;&#25454;&#30446;&#24405;&#26159;&#31354;&#30340;&#65292;&#21542;&#21017;&#19981;&#20250;&#25191;&#34892;&#65292;</span>
-<span style="color: #75715E;"># </span><span style="color: #75715E;">&#25110;&#32773;&#23558;&#20320;&#35201;&#24674;&#22797;&#30340;&#34920;&#25163;&#21160;&#22797;&#21046;&#22238;&#25968;&#25454;&#24211;&#30340;&#25968;&#25454;&#30446;&#24405;&#20063;&#21487;&#20197;</span>
-innobackupex --copy-back BASE-DIR
-</pre>
+<div id="outline-container-orgheadline2" class="outline-4">
+<h4 id="orgheadline2"><span class="section-number-4">1.1.2</span> Cons</h4>
+<div class="outline-text-4" id="text-1-1-2">
+<ol class="org-ol">
+<li>新用户需要学习 Puppet DSL 或者 Ruby</li>
+<li>安装出错排错难，没有完善的错误报告能力</li>
+<li>括容复杂，DSL 配置会变得非常复杂</li>
+<li>缺乏同时系统（例如 salt 的文件服务器）</li>
+<li>企业版仅支持 &lt;10 节点</li>
+</ol>
 </div>
 </div>
 </div>
-
 <div id="outline-container-orgheadline5" class="outline-3">
-<h3 id="orgheadline5"><span class="section-number-3">1.5</span> END</h3>
-<div class="outline-text-3" id="text-1-5">
-<p>
-以前说以后翻译 Python 官网文档，想了想这部分内容就不放在这里了，我记录到博客里就好了，大家晚安。
-</p>
+<h3 id="orgheadline5"><span class="section-number-3">1.2</span> Chef</h3>
+<div class="outline-text-3" id="text-1-2">
+</div><div id="outline-container-orgheadline4" class="outline-4">
+<h4 id="orgheadline4"><span class="section-number-4">1.2.1</span> Pors</h4>
+<div class="outline-text-4" id="text-1-2-1">
+<ol class="org-ol">
+<li>中间件和操作系统的管理最灵活的解决方案之一</li>
+<li>为程序员打造</li>
+<li>文档很好，社区活跃</li>
+<li>起始，看了第二条就没必要继续看了</li>
+<li>需要付费</li>
+</ol>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgheadline8" class="outline-3">
+<h3 id="orgheadline8"><span class="section-number-3">1.3</span> Ansible</h3>
+<div class="outline-text-3" id="text-1-3">
+</div><div id="outline-container-orgheadline6" class="outline-4">
+<h4 id="orgheadline6"><span class="section-number-4">1.3.1</span> Pors</h4>
+<div class="outline-text-4" id="text-1-3-1">
+<ol class="org-ol">
+<li>简单的远程执行功能，登录方便（这条更像一个跳板系统的功能）</li>
+<li>适用于快速发展的环境</li>
+<li>Shares facts between multiple servers, so they can query each othe（不懂）</li>
+<li>安装简单</li>
+<li>新用户学习成本低</li>
+<li>push、pull 模形都支持</li>
+<li>无需安装 agent</li>
+<li>可付费获取支持</li>
+</ol>
+</div>
+</div>
+<div id="outline-container-orgheadline7" class="outline-4">
+<h4 id="orgheadline7"><span class="section-number-4">1.3.2</span> Cons</h4>
+<div class="outline-text-4" id="text-1-3-2">
+<ol class="org-ol">
+<li>太过强调“命令编排”，甚至大过了配置管理本身</li>
+<li>SSH慢</li>
+<li>需要 root 权限以及 Python 环境（这就是所谓的不需要客户端）</li>
+<li>组件之间语法不同（比如赖以成名的 playbook 和 模板）</li>
+<li>（几乎）没有  UI</li>
+</ol>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgheadline11" class="outline-3">
+<h3 id="orgheadline11"><span class="section-number-3">1.4</span> Salt</h3>
+<div class="outline-text-3" id="text-1-4">
+</div><div id="outline-container-orgheadline9" class="outline-4">
+<h4 id="orgheadline9"><span class="section-number-4">1.4.1</span> Pors</h4>
+<div class="outline-text-4" id="text-1-4-1">
+<ol class="org-ol">
+<li>高弹性</li>
+<li>简单、直观的安装及配置</li>
+<li>Strong introspection.</li>
+<li>社区活跃</li>
+<li>丰富的扩展（貌似只有 salt 有这条），yaml 语法的配置</li>
+<li>最初开发目的是用于监控，所以比如进程监控类的角度赖看也很强大</li>
+</ol>
+</div>
+</div>
+<div id="outline-container-orgheadline10" class="outline-4">
+<h4 id="orgheadline10"><span class="section-number-4">1.4.2</span> Cons</h4>
+<div class="outline-text-4" id="text-1-4-2">
+<ol class="org-ol">
+<li>新用户安装可能有点麻烦</li>
+<li>文档多，但是管理不太好，查找不太容易</li>
+<li>（几乎）没有 UI</li>
+<li>除 Linux 外的其他操作系统来说不是最好的选择</li>
+</ol>
+</div>
 </div>
 </div>
 </div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: CarlJohn</p>
-<p class="date">Created: 2016-10-26 Wed 23:04</p>
+<p class="date">Created: 2016-12-06 Tue 22:57</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

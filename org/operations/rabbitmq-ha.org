@@ -53,14 +53,18 @@
 
 
 **** Configuration the policy
-     有三种方式来配置 node 策略:
-     1. CLI:
-	# 这里支持正则，第三个参数是匹配 queue name，你的队列名，第四个参数就是上边提到的策略
-	rabbitmqctl set_policy ha-all "^ha\." '{"ha-mode":"all"}'
-     2. HTTP API:
-	PUT /api/policies/%2f/ha-all {"pattern":"^ha\.", "definition":{"ha-mode":"all"}}
-     3. Web UI:
-	# RMQ 可以开启 WEB 管理界面，通过 WEB 界面也可以配置，这里就不介绍了。
+     #+BEGIN_SRC shell
+       # 有三种方式来配置 node 策略:
+       # 1. CLI:
+       # 这里支持正则，第三个参数是匹配 queue name，
+       # 你的队列名，第四个参数就是上边提到的策略
+       # rabbitmqctl set_policy ha-all "^ha\." '{"ha-mode":"all"}'
+       # 2. HTTP API:
+       # PUT /api/policies/%2f/ha-all {"pattern":"^ha\.","definition":{"ha-mode":"all"}}
+       # 3. Web UI:
+       # RMQ 可以开启 WEB 管理界面，
+       # 通过 WEB 界面也可以配置，这里就不介绍了。
+     #+END_SRC
 ** End
    好了，就到这里了，基本上这就是关于 RMQ 集群的核心概念了，看起来今天已经很晚了，
    我还是考虑把 KeepAlived 的内容分开放到下一篇好了。

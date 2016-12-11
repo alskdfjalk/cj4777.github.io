@@ -6,13 +6,13 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Nagios</title>
-  <meta name="description" content="2016-09-29-test_post &lt;!--*/ .title { text-align: center; } .todo { font-family: monospace; color: red; } .done { color: green; } .tag { background-color: #ee...">
+  <title>Rabbitmq Ha</title>
+  <meta name="description" content="&lt;!--*/ .title { text-align: center; margin-bottom: .2em; } .subtitle { text-align: center; font-size: medium; font-weight: bold; margin-top:0; } .todo { font...">
 
   
   
   <link rel="stylesheet" href="https://cj4777.github.io/css/main.css">
-  <link rel="canonical" href="https://cj4777.github.io/monitor/nagios/2016-09-29-nagios.html">
+  <link rel="canonical" href="https://cj4777.github.io/operations/queues/2016/12/09/rabbitmq-ha.html">
   <link rel="alternate" type="application/rss+xml" title="CJ BLOG" href="https://cj4777.github.io/feed.xml">
   
   
@@ -51,8 +51,6 @@
           
         
           
-          <a class="page-link" href="https://cj4777.github.io/queues/index.html">queues</a>
-          
         
           
           <a class="page-link" href="https://cj4777.github.io/operations/index.html">operations</a>
@@ -63,9 +61,17 @@
           
         
           
+          <a class="page-link" href="https://cj4777.github.io/monitor/index.html">monitor</a>
+          
         
           
-          <a class="page-link" href="https://cj4777.github.io/monitor/index.html">monitor</a>
+          <a class="page-link" href="https://cj4777.github.io/queues/index.html">queues</a>
+          
+        
+          
+          <a class="page-link" href="https://cj4777.github.io/security/index.html">security</a>
+          
+        
           
         
           
@@ -91,7 +97,7 @@
         <article class="post">
 
   <header class="post-header">
-    <h1 class="post-title">Nagios</h1>
+    <h1 class="post-title">Rabbitmq Ha</h1>
   </header>
 
   <div class="post-content">
@@ -100,22 +106,30 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>2016-09-29-test_post</title>
-<!-- 2016-09-29 四 14:36 -->
+<!-- 2016-12-09 Fri 23:35 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="viewport" content="width=device-width, initial-scale=1" />
+<title></title>
 <meta  name="generator" content="Org-mode" />
+<meta  name="author" content="CarlJohn" />
 <style type="text/css">
  <!--/*--><![CDATA[/*><!--*/
-  .title  { text-align: center; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
   .todo   { font-family: monospace; color: red; }
-  .done   { color: green; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
   .tag    { background-color: #eee; font-family: monospace;
             padding: 2px; font-size: 80%; font-weight: normal; }
   .timestamp { color: #bebebe; }
   .timestamp-kwd { color: #5f9ea0; }
-  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
-  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
-  .center { margin-left: auto; margin-right: auto; text-align: center; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
   .underline { text-decoration: underline; }
   #postamble p, #preamble p { font-size: 90%; margin: .2em; }
   p.verse { margin-left: 3%; }
@@ -154,15 +168,14 @@
   caption.t-above { caption-side: top; }
   caption.t-bottom { caption-side: bottom; }
   td, th { vertical-align:top;  }
-  th.right  { text-align: center;  }
-  th.left   { text-align: center;   }
-  th.center { text-align: center; }
-  td.right  { text-align: right;  }
-  td.left   { text-align: left;   }
-  td.center { text-align: center; }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
   dt { font-weight: bold; }
-  .footpara:nth-child(2) { display: inline; }
-  .footpara { display: block; }
+  .footpara { display: inline; }
   .footdef  { margin-bottom: 1em; }
   .figure { padding: 1em; }
   .figure p { text-align: center; }
@@ -193,13 +206,11 @@
 <link rel="stylesheet" type="text/css"
     href="/css/hideshow.css"/>
 
-
 <script type="text/javascript"
     src="/js/jquery-1.11.0.min.js"></script>
 
 <script type="text/javascript"
     src="/js/jquery-ui-1.10.2.min.js"></script>
-
 
 <script type="text/javascript"
     src="/js/jquery.localscroll-min.js"></script>
@@ -267,35 +278,185 @@ for the JavaScript code in this tag.
 </head>
 <body>
 <div id="content">
-<h1 class="title">2016-09-29-test_post</h1>
 <div id="table-of-contents">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#sec-1">1. Hello</a>
+<li><a href="#orgheadline10">1. RabbitMQ Highly Availability And KeepAlived</a>
 <ul>
-<li><a href="#sec-1-1">1.1. This world is beautiful</a></li>
+<li><a href="#orgheadline1">1.1. Introduction</a></li>
+<li><a href="#orgheadline2">1.2. What's the RabbitMQ</a></li>
+<li><a href="#orgheadline8">1.3. Highly Availability in RabbitMQ</a>
+<ul>
+<li><a href="#orgheadline3">1.3.1. Unsynchronised Slaves</a></li>
+<li><a href="#orgheadline7">1.3.2. Mirroring</a></li>
+</ul>
+</li>
+<li><a href="#orgheadline9">1.4. End</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
-<div id="outline-container-sec-1" class="outline-2">
-<h2 id="sec-1"><span class="section-number-2">1</span> Hello</h2>
+<div id="outline-container-orgheadline10" class="outline-2">
+<h2 id="orgheadline10"><span class="section-number-2">1</span> RabbitMQ Highly Availability And KeepAlived</h2>
 <div class="outline-text-2" id="text-1">
-</div><div id="outline-container-sec-1-1" class="outline-3">
-<h3 id="sec-1-1"><span class="section-number-3">1.1</span> This world is beautiful</h3>
+</div><div id="outline-container-orgheadline1" class="outline-3">
+<h3 id="orgheadline1"><span class="section-number-3">1.1</span> Introduction</h3>
 <div class="outline-text-3" id="text-1-1">
 <p>
-bla bla bla..
+一个朋友说我的生活里工作占用的时间比例太大了，几乎完全没有生活，
+可能我早就被痛苦和工作、学习奴役了吧，只是无脑的为了学习而学习，谁知道呢，知道的越少越好吧，与其明白自己生活在苦难中后
+让自己更痛苦，还不如完全不理会，所谓“身在福中不知福”，那我就“身在苦中不知苦”好了。
+</p>
+
+<p>
+最近对 RabbitMQ 的高可用做了一些了解，包括 KeepAlived 的原理和配置过程，简单记录、分享一下。
+</p>
+
+<p>
+对了，标题我尝试用英文来写了，最近因为英文被一个陌生人轻轻的鄙视了一下，宝宝表示很不开心，暂时用英文写标题，以后
+大概有一天可以用英文来写正文部分了吧(这是一个美好的愿望)。
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgheadline2" class="outline-3">
+<h3 id="orgheadline2"><span class="section-number-3">1.2</span> What's the RabbitMQ</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+简单说，当然了，我了解的也不够多，事实上我在尽力往复杂了说。
+</p>
+
+<p>
+RabbitMQ 是一个队列服务，用 Erlang 实现，大多用在对可用性要求极高的场景中。
+它有这么几个概念：exchanges、queues、channels，但事实上我没有深入了解，猜测应该和 Kfaka 的 Topic 类似吧，
+类似分组，比如每个 channel 可以有多个 queue，每个 exchange 可以有多个 channel。
+</p>
+
+<p>
+嗯，是的，介绍完了，就酱，介绍完了，不过，正题是 HA 对吗？所以还是进(tao)入(bi)主题吧。
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgheadline8" class="outline-3">
+<h3 id="orgheadline8"><span class="section-number-3">1.3</span> Highly Availability in RabbitMQ</h3>
+<div class="outline-text-3" id="text-1-3">
+</div><div id="outline-container-orgheadline3" class="outline-4">
+<h4 id="orgheadline3"><span class="section-number-4">1.3.1</span> Unsynchronised Slaves</h4>
+<div class="outline-text-4" id="text-1-3-1">
+<p>
+和所有的高可用集群服务一样，当你的数据进入一个队列时，数据会被复制到其他的 Slave 节点。
+它可以在不停止服务的情况下，在线将 Slave 加入集群中，在加入集群后，它不会包含任何数据，
+当有新数据进入集群队列的时候，数据会被同步到新增的这个节点，数据一直在被消费，直到集群中
+的所有“旧数据”(新节点中不存在的数据)被消费光的时候，新节点才会和整个集群的数据保持完全同步。
+</p>
+</div>
+</div>
+<div id="outline-container-orgheadline7" class="outline-4">
+<h4 id="orgheadline7"><span class="section-number-4">1.3.2</span> Mirroring</h4>
+<div class="outline-text-4" id="text-1-3-2">
+<p>
+这些名词真是够了，明明是一样的东西，非得叫不同的名字，比如这个 RMQ 中，它的集群关系叫“镜像”，
+把数据“镜像”到 Slave。
+</p>
+</div>
+
+<ol class="org-ol"><li><a id="orgheadline4"></a>Mirror policy<br  /><div class="outline-text-5" id="text-1-3-2-1">
+<p>
+数据镜像有几种策略：
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">ha-mode</th>
+<th scope="col" class="org-left">ha-params</th>
+<th scope="col" class="org-left">Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">all</td>
+<td class="org-left">(absent)</td>
+<td class="org-left">队列会镜像到集群中的所有节点，当新节点加入进来的时候队列会被镜像到新节点(如上解释)</td>
+</tr>
+
+<tr>
+<td class="org-left">exactly</td>
+<td class="org-left">count</td>
+<td class="org-left">队列镜像到指定数量的节点中，如果集群中现有节点少于指定的节点，队列会被镜像到所有节点。否则，多余的节点会在有节点宕机时才会启用进入该集群开始同步，啊，不，开始镜像数据。</td>
+</tr>
+
+<tr>
+<td class="org-left">nodes</td>
+<td class="org-left">node names</td>
+<td class="org-left">用“实例名”来指定一个节点列表，当实例名包含在这个列表里时，数据才会镜像过来。节点名默认使用“rabbit@${HOSTNAME}，当集群中没有其他可用节点时，这些没有被包含进来的节点才会启用开始镜像数据。</td>
+</tr>
+</tbody>
+</table>
+</div></li>
+
+
+<li><a id="orgheadline5"></a>Append a node to cluster<br  /><div class="outline-text-5" id="text-1-3-2-2">
+<div class="org-src-container">
+
+<pre class="src src-shell"><span style="color: #75715E;"># </span><span style="color: #75715E;">1) master:</span>
+rabbitmqctl stop_app
+rabbitmqctl reset
+rabbitmqctl start_app
+<span style="color: #75715E;"># </span><span style="color: #75715E;">2) other node:</span>
+rabbitmqctl stop_app
+rabbitmqctl reset
+<span style="color: #75715E;"># </span><span style="color: #75715E;">&#36825;&#37324;&#30340; --ram &#21442;&#25968;&#25351;&#23450;&#20102;&#23558;&#25968;&#25454;&#20445;&#23384;&#22312;&#20869;&#23384;&#20013;&#65292;&#22914;&#26377;&#38656;&#35201;&#21487;&#20197;&#21435;&#25481;&#65292;&#40664;&#35748;&#20250;&#20889;&#21040;&#30828;&#30424;&#19978;&#12290;</span>
+rabbitmqctl join_cluster --ram rabbit@rabbitmq1
+rabbitmqctl start_app
+</pre>
+</div>
+</div></li>
+
+
+<li><a id="orgheadline6"></a>Configuration the policy<br  /><div class="outline-text-5" id="text-1-3-2-3">
+<div class="org-src-container">
+
+<pre class="src src-shell"><span style="color: #75715E;"># </span><span style="color: #75715E;">&#26377;&#19977;&#31181;&#26041;&#24335;&#26469;&#37197;&#32622; node &#31574;&#30053;:</span>
+<span style="color: #75715E;"># </span><span style="color: #75715E;">1. CLI:</span>
+<span style="color: #75715E;"># </span><span style="color: #75715E;">&#36825;&#37324;&#25903;&#25345;&#27491;&#21017;&#65292;&#31532;&#19977;&#20010;&#21442;&#25968;&#26159;&#21305;&#37197; queue name&#65292;</span>
+<span style="color: #75715E;"># </span><span style="color: #75715E;">&#20320;&#30340;&#38431;&#21015;&#21517;&#65292;&#31532;&#22235;&#20010;&#21442;&#25968;&#23601;&#26159;&#19978;&#36793;&#25552;&#21040;&#30340;&#31574;&#30053;</span>
+<span style="color: #75715E;"># </span><span style="color: #75715E;">rabbitmqctl set_policy ha-all "^ha\." '{"ha-mode":"all"}'</span>
+<span style="color: #75715E;"># </span><span style="color: #75715E;">2. HTTP API:</span>
+<span style="color: #75715E;"># </span><span style="color: #75715E;">PUT /api/policies/%2f/ha-all {"pattern":"^ha\.","definition":{"ha-mode":"all"}}</span>
+<span style="color: #75715E;"># </span><span style="color: #75715E;">3. Web UI:</span>
+<span style="color: #75715E;"># </span><span style="color: #75715E;">RMQ &#21487;&#20197;&#24320;&#21551; WEB &#31649;&#29702;&#30028;&#38754;&#65292;</span>
+<span style="color: #75715E;"># </span><span style="color: #75715E;">&#36890;&#36807; WEB &#30028;&#38754;&#20063;&#21487;&#20197;&#37197;&#32622;&#65292;&#36825;&#37324;&#23601;&#19981;&#20171;&#32461;&#20102;&#12290;</span>
+</pre>
+</div>
+</div></li></ol>
+</div>
+</div>
+<div id="outline-container-orgheadline9" class="outline-3">
+<h3 id="orgheadline9"><span class="section-number-3">1.4</span> End</h3>
+<div class="outline-text-3" id="text-1-4">
+<p>
+好了，就到这里了，基本上这就是关于 RMQ 集群的核心概念了，看起来今天已经很晚了，
+我还是考虑把 KeepAlived 的内容分开放到下一篇好了。
 </p>
 </div>
 </div>
 </div>
 </div>
 <div id="postamble" class="status">
-<p class="date">Created: 2016-09-29 四 14:36</p>
-<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.5.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
+<p class="author">Author: CarlJohn</p>
+<p class="date">Created: 2016-12-09 Fri 23:35</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

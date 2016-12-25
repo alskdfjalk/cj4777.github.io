@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Google Sre</title>
+  <meta name="description" content="Google SRE 读后感 &lt;!--*/ .title { text-align: center; margin-bottom: .2em; } .subtitle { text-align: center; font-size: medium; font-weight: bold; margin-top:0;...">
+
+  
+  
+  <link rel="stylesheet" href="https://cj4777.github.io/css/main.css">
+  <link rel="canonical" href="https://cj4777.github.io/operations/automation/2016/12/25/google-sre.html">
+  <link rel="alternate" type="application/rss+xml" title="CJ BLOG" href="https://cj4777.github.io/feed.xml">
+  
+  
+</head>
+
+
+  <body>
+
+    <header class="site-header" role="banner">
+
+  <div class="wrapper">
+
+    
+    
+    <a class="site-title" href="https://cj4777.github.io/">CJ BLOG</a>
+
+    <nav class="site-nav">
+      <a href="#" class="menu-icon">
+        <svg viewBox="0 0 18 15" width="18px" height="15px">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+      </a>
+
+      <div class="trigger">
+        
+          
+        
+          
+        
+          
+        
+          
+          <a class="page-link" href="https://cj4777.github.io/languages/index.html">languages</a>
+          
+        
+          
+        
+          
+          <a class="page-link" href="https://cj4777.github.io/operations/index.html">operations</a>
+          
+        
+          
+          <a class="page-link" href="https://cj4777.github.io/mysql/index.html">db</a>
+          
+        
+          
+          <a class="page-link" href="https://cj4777.github.io/monitor/index.html">monitor</a>
+          
+        
+          
+          <a class="page-link" href="https://cj4777.github.io/queues/index.html">queues</a>
+          
+        
+          
+          <a class="page-link" href="https://cj4777.github.io/security/index.html">security</a>
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Google Sre</h1>
+  </header>
+
+  <div class="post-content">
+    <?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2016-12-25 Sun 17:30 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="viewport" content="width=device-width, initial-scale=1" />
+<title>Google SRE 读后感</title>
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="CJ" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css"
+    href="/css/htmlize.css"/>
+
+<link rel="stylesheet" type="text/css"
+    href="/css/bigblow.css"/>
+
+<link rel="stylesheet" type="text/css"
+    href="/css/hideshow.css"/>
+
+<script type="text/javascript"
+    src="/js/jquery-1.11.0.min.js"></script>
+
+<script type="text/javascript"
+    src="/js/jquery-ui-1.10.2.min.js"></script>
+
+<script type="text/javascript"
+    src="/js/jquery.localscroll-min.js"></script>
+
+<script type="text/javascript"
+    src="/js/jquery.scrollTo-1.4.3.1-min.js"></script>
+
+<script type="text/javascript"
+    src="/js/jquery.zclip.min.js"></script>
+
+<script type="text/javascript"
+    src="/js/bigblow.js"></script>
+
+<script type="text/javascript"
+    src="/js/hideshow.js"></script>
+
+<script type="text/javascript"
+    src="/js/jquery.stickytableheaders.min.js"></script>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Google SRE 读后感</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgheadline4">1. 服务质量目标</a>
+<ul>
+<li><a href="#orgheadline1">1.1. 指标的标准化</a></li>
+<li><a href="#orgheadline2">1.2. 目标范围</a></li>
+<li><a href="#orgheadline3">1.3. 目标的选择</a></li>
+</ul>
+</li>
+<li><a href="#orgheadline5">2. 琐事</a></li>
+<li><a href="#orgheadline10">3. 监控</a>
+<ul>
+<li><a href="#orgheadline6">3.1. 4 个黄金指标</a></li>
+<li><a href="#orgheadline7">3.2. 长尾问题</a></li>
+<li><a href="#orgheadline8">3.3. 精简监控平台</a></li>
+<li><a href="#orgheadline9">3.4. 设计一个监控系统的 checklist</a></li>
+</ul>
+</li>
+<li><a href="#orgheadline13">4. Google 的自动化系统演进</a>
+<ul>
+<li><a href="#orgheadline12">4.1. 自动化的价值</a>
+<ul>
+<li><a href="#orgheadline11">4.1.1. 自动化实现路径</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#orgheadline18">5. 发布工程</a>
+<ul>
+<li><a href="#orgheadline14">5.1. 发布工程哲学</a></li>
+<li><a href="#orgheadline16">5.2. 持续构建与部署</a>
+<ul>
+<li><a href="#orgheadline15">5.2.1. Rapid，Google 内部开发并使用的发布系统</a></li>
+</ul>
+</li>
+<li><a href="#orgheadline17">5.3. END</a></li>
+</ul>
+</li>
+<li><a href="#orgheadline20">6. 简单化</a>
+<ul>
+<li><a href="#orgheadline19">6.1. 乏味是一种美德</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgheadline4" class="outline-2">
+<h2 id="orgheadline4"><span class="section-number-2">1</span> 服务质量目标</h2>
+<div class="outline-text-2" id="text-1">
+<ol class="org-ol">
+<li>SLI:
+服务的量化指标</li>
+<li>SLO：
+服务的质量目标（如：SLI  &lt;= SLO）</li>
+<li>SLA：
+达到或者未达到目标应该有什么样的措施（如：给用户退款）
+通常 SRE 并不需要关心 SLA，但应该尽可能告诉业务、法务部门 SLO 的难易度，并且给出 SLI</li>
+</ol>
+<p>
+<i><b>可以在错误预算之内进行刻意的触发故障来判断哪些系统过于依赖不应该依赖的组件</b></i>
+</p>
+</div>
+<div id="outline-container-orgheadline1" class="outline-3">
+<h3 id="orgheadline1"><span class="section-number-3">1.1</span> 指标的标准化</h3>
+<div class="outline-text-3" id="text-1-1">
+<ol class="org-ol">
+<li>汇总间隔：每分钟汇总一次</li>
+<li>汇总范围：集群中的全部任务</li>
+<li>度量频率：每 10 秒一次</li>
+<li>包含的请求：从黑盒监控任务发来的 HTTP GET 请求</li>
+<li>数据获取：通过监控系统获取服务器端信息得到</li>
+<li>数据访问延迟：从收到请求最后一个字节被发出</li>
+</ol>
+</div>
+</div>
+<div id="outline-container-orgheadline2" class="outline-3">
+<h3 id="orgheadline2"><span class="section-number-3">1.2</span> 目标范围</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+从想要的（用户视角）目标反向推导出具体的指标。
+</p>
+</div>
+</div>
+<div id="outline-container-orgheadline3" class="outline-3">
+<h3 id="orgheadline3"><span class="section-number-3">1.3</span> 目标的选择</h3>
+<div class="outline-text-3" id="text-1-3">
+<ol class="org-ol">
+<li>不要仅以当下的状态为基础选择目标</li>
+<li>保持简单</li>
+<li>避免绝对值</li>
+<li>SLO 越少越好，保证每一个目标都是必须的</li>
+<li>不要追求完美</li>
+</ol>
+</div>
+</div>
+</div>
+<div id="outline-container-orgheadline5" class="outline-2">
+<h2 id="orgheadline5"><span class="section-number-2">2</span> 琐事</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+<i><b>如果系统正常运转中需要人工干预，应该将此视为一种 BUG</b></i>
+</p>
+</div>
+</div>
+<div id="outline-container-orgheadline10" class="outline-2">
+<h2 id="orgheadline10"><span class="section-number-2">3</span> 监控</h2>
+<div class="outline-text-2" id="text-3">
+</div><div id="outline-container-orgheadline6" class="outline-3">
+<h3 id="orgheadline6"><span class="section-number-3">3.1</span> 4 个黄金指标</h3>
+<div class="outline-text-3" id="text-3-1">
+<ol class="org-ol">
+<li>延迟：
+区分成功、失败的延迟</li>
+<li>流量
+如：内存、IO、HTTP 的每秒请求数等</li>
+<li>错误
+请求失败的速率，感觉和 第一条 重复了，不太理解</li>
+<li>饱和度
+如：该系统是否可以承担额外的 10%、50% 的流量</li>
+</ol>
+</div>
+</div>
+<div id="outline-container-orgheadline7" class="outline-3">
+<h3 id="orgheadline7"><span class="section-number-3">3.2</span> 长尾问题</h3>
+<div class="outline-text-3" id="text-3-2">
+<p>
+如访问速度，按监控值分组，比如：0 ~ 10ms 之间的数量，30 ~ 100ms 之间的数量，100ms 以上的数量，等等
+</p>
+</div>
+</div>
+<div id="outline-container-orgheadline8" class="outline-3">
+<h3 id="orgheadline8"><span class="section-number-3">3.3</span> 精简监控平台</h3>
+<div class="outline-text-3" id="text-3-3">
+<ol class="org-ol">
+<li>最能反映真实故障的规则应该越简单越好，可预测性强，非常可靠</li>
+<li>不常用的数据收集、汇总，以及警报配置应该定时删除（如一个季度没有用到一次即将其删除）</li>
+<li>收集到的信息没有暴露给任何监控台，或者被任何警报规则使用的应该定时删除</li>
+</ol>
+</div>
+</div>
+<div id="outline-container-orgheadline9" class="outline-3">
+<h3 id="orgheadline9"><span class="section-number-3">3.4</span> 设计一个监控系统的 checklist</h3>
+<div class="outline-text-3" id="text-3-4">
+<ol class="org-ol">
+<li>该规则 是否能够检测到一个目前检测不到的、紧急的、有操作性的，并且即将发生或者已经发生的用户可见故障</li>
+<li>是否可以忽略这条报警？什么情况可能会导致用户忽略这条警报？如何避免？</li>
+<li>这条警报是否确实显示了用户正在受到影响？是否存在用户没有受到影响也可以出发这条规则的情况？例如
+测试环境和系统维护状态下发出的警报是否应该被过滤掉？</li>
+<li>收到警报后，是否要进行某个操作？是否需要立即执行该操作，还是可以等到第二天早上再进行？该操作是否可以被安全地自动化？
+该操作的效果是长期的还是短期的？</li>
+<li>是否也会有其他人收到相关的紧急警报，这些紧急警报是否是不必要的？</li>
+</ol>
+</div>
+</div>
+</div>
+<div id="outline-container-orgheadline13" class="outline-2">
+<h2 id="orgheadline13"><span class="section-number-2">4</span> Google 的自动化系统演进</h2>
+<div class="outline-text-2" id="text-4">
+</div><div id="outline-container-orgheadline12" class="outline-3">
+<h3 id="orgheadline12"><span class="section-number-3">4.1</span> 自动化的价值</h3>
+<div class="outline-text-3" id="text-4-1">
+<ol class="org-ol">
+<li>一致性
+任何机械、重复的行为都不可能永远复制成功方式的步骤，这个是自动化的首要价值。</li>
+<li>平台性
+<ol class="org-ol">
+<li>错误集中化，一次变更永久修复</li>
+<li>方便扩展</li>
+<li>梳理流程</li>
+</ol></li>
+<li>修复速度
+降低故障的平均修复时间，可以把时间用来防止其他故障的自动化处理，良性循环</li>
+<li>行动速度更快</li>
+<li>节省时间
+自动化设施可以被所有人使用</li>
+</ol>
+</div>
+<div id="outline-container-orgheadline11" class="outline-4">
+<h4 id="orgheadline11"><span class="section-number-4">4.1.1</span> 自动化实现路径</h4>
+<div class="outline-text-4" id="text-4-1-1">
+<ol class="org-ol">
+<li>操作人员手动触发操作（无自动化）</li>
+<li>操作人员编写系统特定的自动化</li>
+<li>外部维护的通用自动化</li>
+<li>内部维护，系统特定的自动化</li>
+<li>不需要认为干预的自治系统</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-orgheadline18" class="outline-2">
+<h2 id="orgheadline18"><span class="section-number-2">5</span> 发布工程</h2>
+<div class="outline-text-2" id="text-5">
+</div><div id="outline-container-orgheadline14" class="outline-3">
+<h3 id="orgheadline14"><span class="section-number-3">5.1</span> 发布工程哲学</h3>
+<div class="outline-text-3" id="text-5-1">
+<ol class="org-ol">
+<li>自服务模型
+完全自动化，不需要人工干预，自动构建、自动发布</li>
+<li>追求速度
+业务产品相关，测试通过即自动发布</li>
+<li>密闭性
+<ol class="org-ol">
+<li>不同环境构建结果应该一致</li>
+<li>构建环境和产品代码绑定，即：如果要对上个月构建过的产品加入一些新功能重新构建，则仍旧使用上个月构建时的环境，包括编译器、依赖库等</li>
+</ol></li>
+<li>强调策略和流程
+<ol class="org-ol">
+<li>批准源代码改动——功过源代码仓库中的配置文件决定</li>
+<li>指定发布流程中需要执行的具体操作</li>
+<li>创建新的发布版本</li>
+<li>批准初始的集成请求(也就是一个以某个源代码仓库版本为基础的构建请求)，以及后续的 cherry picking 请求</li>
+<li>实际部署某个发布版本</li>
+<li>修改某个项目的构建配置文件</li>
+</ol></li>
+<li>结果归档，包括构建过程</li>
+</ol>
+</div>
+</div>
+<div id="outline-container-orgheadline16" class="outline-3">
+<h3 id="orgheadline16"><span class="section-number-3">5.2</span> 持续构建与部署</h3>
+<div class="outline-text-3" id="text-5-2">
+</div><div id="outline-container-orgheadline15" class="outline-4">
+<h4 id="orgheadline15"><span class="section-number-4">5.2.1</span> Rapid，Google 内部开发并使用的发布系统</h4>
+<div class="outline-text-4" id="text-5-2-1">
+<ol class="org-ol">
+<li>构建
+<ol class="org-ol">
+<li>提供需要的依赖，rapid 完成依赖安装</li>
+<li>二进制文件中提供构建时间、构建版本等标识符</li>
+</ol></li>
+<li>分支
+从 mainline 中分离线上版本（如 git tag）</li>
+<li>测试
+自动单元测试，测试结果归档并且审核后发布</li>
+<li>打包
+构建结果做 HASH，并且加入签名，防止结果被改动。</li>
+<li>配置文件与产品版本关联，同时测试、发布等</li>
+</ol>
+</div>
+</div>
+</div>
+<div id="outline-container-orgheadline17" class="outline-3">
+<h3 id="orgheadline17"><span class="section-number-3">5.3</span> END</h3>
+<div class="outline-text-3" id="text-5-3">
+<ol class="org-ol">
+<li>发布工具(或其他工具)的开发是因为需要针对自己团队的流程</li>
+<li>项目初期定义发布规范，而不是在由开发团队编写代码后“将结果扔过墙”</li>
+</ol>
+</div>
+</div>
+</div>
+<div id="outline-container-orgheadline20" class="outline-2">
+<h2 id="orgheadline20"><span class="section-number-2">6</span> 简单化</h2>
+<div class="outline-text-2" id="text-6">
+<p>
+一个对 SRE 管理系统的方法不错的总结是“我们的工作最终是在系统的灵活性和稳定性上维持平衡”
+</p>
+
+<p>
+SRE 通过创造流程、实践与工具来提高软件的可靠性。同时最小化这些流程、工具对开发人员的灵活性
+造成的影响。
+</p>
+</div>
+<div id="outline-container-orgheadline19" class="outline-3">
+<h3 id="orgheadline19"><span class="section-number-3">6.1</span> 乏味是一种美德</h3>
+<div class="outline-text-3" id="text-6-1">
+<p>
+必要复杂度和意外复杂度，必要复杂度是不可避免的，预料中的；意外复杂度是可以通过设计来使其更简单的。
+</p>
+
+<p>
+为了最小化意外复杂度，SRE 团队应该：
+</p>
+<ol class="org-ol">
+<li>在他们所负责的系统中引入意外复杂度时及时提出抗议。</li>
+</ol>
+<p>
+2.不断地努力消除正在接手的和已经负责运维的系统的复杂度。
+</p>
+
+<p>
+这里我想到的就是，在我目前的生产环境中用到了很多软链接，虽然我努力做了一些抗议，但没有被接受。
+</p>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: CJ</p>
+<p class="date">Created: 2016-12-25 Sun 17:30</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
+
+  </div>
+
+</article>
+
+      </div>
+    </main>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">CJ BLOG</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li>
+            
+              CJ BLOG
+            
+            </li>
+          <li><a href="mailto:zhangyafeng.cj@gmail.com">zhangyafeng.cj@gmail.com</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-2">
+        <ul class="social-media-list">
+          
+          <li>
+            <a href="https://github.com/cj4777"><span class="icon icon--github"><svg viewBox="0 0 16 16" width="16px" height="16px"><path fill="#828282" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/></svg>
+</span><span class="username">cj4777</span></a>
+
+          </li>
+          
+
+          
+          <li>
+            <a href="https://twitter.com/zhangyafeng_cj"><span class="icon icon--twitter"><svg viewBox="0 0 16 16" width="16px" height="16px"><path fill="#828282" d="M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27 c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767 c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206 C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271 c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469 c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"/></svg>
+</span><span class="username">zhangyafeng_cj</span></a>
+
+          </li>
+          
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-3">
+        <p>CJ: Crazy Jerry, the name from the cartoon 《Tom and Jerry》
+</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

@@ -1,0 +1,78 @@
+* SaltStack 简介
+** Introduction
+   本来没准备写关于 Salt 的东西，总觉得对它的了解太少了，后来听了一次中国用户组发起人组织的一个沙龙，
+   发现我了解的东西和这些大咖讲的内容还是比较接近的，差距没有那么大，但仍然有很多人听的入神，现在准备
+   把这些内容拿出来写写，刚好给公司同事做一个简单的培训。
+** SALT ESSENTIALS
+   [[https://docs.saltstack.com/en/latest/][官网文档]]
+
+   /*建议按照以下排名顺序了解*/
+   1. Running Commands（[[https://docs.saltstack.com/en/latest/topics/execution/remote_execution.html][文档]]）
+   2. Targeting（[[https://docs.saltstack.com/en/latest/topics/targeting/][官方文档]]）
+   3. YAML
+      1) Master/Minion 配置文件
+   4. Grains ([[https://docs.saltstack.com/en/latest/topics/grains/][Grains 组件文档]])
+      1) Minion 端定义
+      2) Master 端定义
+   5. Pillar （[[https://docs.saltstack.com/en/latest/topics/pillar/][Pillar 组件文档]])
+      1) Master 端定义
+   6. State（[[https://docs.saltstack.com/en/latest/ref/states/][States 组件文档]]）
+      1) SLS 文件
+	 /*这个组件非常复杂*/
+   7. Modules
+      1) Built-in
+      2) Custom
+   8. Runners（[[http://salt-zh.readthedocs.io/en/latest/ref/runners/][Runner 模块文档]])
+   9. Returner（[[https://docs.saltstack.com/en/latest/ref/returners/][文档]]）
+   10. Best Practices（[[https://docs.saltstack.com/en/latest/topics/best_practices.html][文档地址]]）
+
+* Running Commands
+  /*这部分主要用来说明命令语法，通常谈到命令行控制操作默认都在说命令“salt”。*/
+** Examples
+   #+BEGIN_SRC sh
+     [sunits@localhost ~]$ sudo salt --help
+     Usage: salt [options] '<target>' <function> [arguments]
+
+     [sunits@localhost ~]$ sudo salt '*' test.ping
+     ali-bj-xbb-web-main-02:
+	 True
+     ali-bj-xbb-web-main-01:
+	 True
+
+     [sunits@localhost ~]$ sudo salt '*' cmd.run 'echo Hello World'
+     ali-bj-xbb-web-main-02:
+	 Hello World
+     ali-bj-xbb-web-main-01:
+	 Hello World
+   #+END_SRC
+
+
+* Salt Runners
+   /*可以在 master 执行模块，功能类似 master 上安装 minion 后对其当作 minion 执行操作。*/
+** Examples
+    # salt-run xxx.up
+    #+BEGIN_SRC python
+      # Import salt modules
+      import salt.client
+
+      def up():
+	      '''
+	      Print a list of all of the minions that are up
+	      '''
+	      client = salt.client.LocalClient(__opts__['conf_file'])
+	      minions = client.cmd('*', 'test.ping', timeout=1)
+	      for minion in sorted(minions):
+		      print minion
+    #+END_SRC
+** Full list of runner modules
+   | cache      | Return cached data from minions                                            |
+   | doc        | A runner module to collect and display the inline documentation from the   |
+   | fileserver | Directly manage the salt fileserver plugins                                |
+   | jobs       | A convenience system to manage jobs, both active and already run           |
+   | launchd    |                                                                            |
+   | manage     | General management functions for salt, tools like seeing what hosts are up |
+   | network    | Network tools to run from the Master                                       |
+   | search     | Runner frontend to search system                                           |
+   | state      | Execute overstate functions                                                |
+   | virt       | Control virtual machines via Salt                                          |
+   | winrepo    | Runner to manage Windows software repo                                     |

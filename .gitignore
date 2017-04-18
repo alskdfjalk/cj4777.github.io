@@ -4,3 +4,4 @@
 *.pyc
 *#
 org/*/*.html
+*.DS_Store
